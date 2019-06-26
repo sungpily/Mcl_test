@@ -226,15 +226,6 @@ void visualization(int n, Robot robot, int step, Robot p[], Robot pr[])
 
 int main()
 {
-    //Practice Interfacing with Robot Class
-    Robot myrobot;
-    myrobot.set_noise(5.0, 0.1, 5.0);
-    myrobot.set(30.0, 50.0, M_PI / 2.0);
-    myrobot.move(-M_PI / 2.0, 15.0);
-    //cout << myrobot.read_sensors() << endl;
-    myrobot.move(-M_PI / 2.0, 10.0);
-    //cout << myrobot.read_sensors() << endl;
-
     // Create a set of particles
     int n = 1000;
     Robot p[n];
@@ -244,8 +235,8 @@ int main()
         //cout << p[i].show_pose() << endl;
     }
 
-    //Re-initialize myrobot object and Initialize a measurment vector
-    myrobot = Robot();
+    //Initialize myrobot object and Initialize a measurment vector
+    Robot myrobot = Robot();
     vector<double> z;
 
     //Move the robot and sense the environment afterwards
@@ -266,10 +257,23 @@ int main()
         //cout << w[i] << endl;
     }
 
-    //####   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ####
-
-    //TODO: Resample the particles with a sample probability proportional to the importance weight
- 
+    //Resample the particles with a sample probability proportional to the importance weight
+    Robot p3[n];
+    int index = gen_real_random() * n;
+    double beta = 0.0;
+    double mw = max(w, n);
+    for (int i = 0; i < n; i++) {
+        beta += gen_real_random() * 2.0 * mw;
+        while (beta > w[index]) {
+            beta -= w[index];
+            index = mod((index + 1), n);
+        }
+        p3[i] = p[index];
+    }
+    for (int k=0; k < n; k++) {
+        p[k] = p3[k];
+        cout << p[k].show_pose() << endl;
+    }
 
     return 0;
 }
